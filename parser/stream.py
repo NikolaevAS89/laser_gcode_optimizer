@@ -10,7 +10,7 @@ from typing import Iterable, Any, Iterator, Callable
 
 from more_itertools import pairwise
 
-from stream.functions import group_by_limit, group_by_memory_limit, echo, append_to_list
+from parser.functions import group_by_limit, group_by_memory_limit, echo, append_to_list
 
 logger = logging.getLogger(__name__)
 
@@ -51,14 +51,14 @@ class Stream(Iterable):
 
     def filter(self, predicate: Callable[[Any], bool]) -> Stream:
         """
-        Returns a stream consisting of the elements of this stream that match the given predicate.
+        Returns a parser consisting of the elements of this parser that match the given predicate.
         NOT TERMINATED
         """
         return Stream(filter(predicate, self))
 
     def map(self, function: Callable[[Any], Any]) -> Stream:
         """
-        Return a stream of results of applying the given function to the elements of the original stream.
+        Return a parser of results of applying the given function to the elements of the original parser.
         NOT TERMINATED
         """
         return Stream(map(function, self))
@@ -72,7 +72,7 @@ class Stream(Iterable):
 
     def distinct(self) -> Stream:
         """
-        Returns a stream consisting of the distinct elements according to '==' of this stream.
+        Returns a parser consisting of the distinct elements according to '==' of this parser.
         !!! WARNING operation store all data to memory !!!
         TERMINATED
         """
@@ -81,7 +81,7 @@ class Stream(Iterable):
 
     def sorted(self, key_function: Callable[[Any], Any]) -> list:
         """
-        Returns a stream consisting of the elements of this stream, sorted according to the provided key_function.
+        Returns a parser consisting of the elements of this parser, sorted according to the provided key_function.
         !!! WARNING operation store all data to memory !!!
         TERMINATED
         """
@@ -89,7 +89,7 @@ class Stream(Iterable):
 
     def to_buckets(self, size_limit: int) -> Stream[tuple]:
         """
-        split the stream to a buckets stream by a buckets size
+        split the parser to a buckets parser by a buckets size
         NOT TERMINATED
         """
         groupped = group_by_limit(self, limit_size=size_limit)
@@ -97,7 +97,7 @@ class Stream(Iterable):
 
     def to_pockets(self, mem_limit: int) -> Stream[list]:
         """
-        split the stream to a pockets stream by a memory size in bytes
+        split the parser to a pockets parser by a memory size in bytes
         NOT TERMINATED
         """
         groupped = group_by_memory_limit(self, memory_limit_size=mem_limit)
@@ -105,8 +105,8 @@ class Stream(Iterable):
 
     def peek(self, function: Callable[[Any], Any]) -> Stream:
         """
-        Returns a stream consisting of the elements of this stream, additionally performing the
-        provided action on each element as elements are consumed from the resulting stream.
+        Returns a parser consisting of the elements of this parser, additionally performing the
+        provided action on each element as elements are consumed from the resulting parser.
         NOT TERMINATED
         """
 
@@ -126,7 +126,7 @@ class Stream(Iterable):
 
     def limit(self, n: int) -> Stream:
         """
-        Returns a stream consisting of the elements of this stream, truncated to be no longer than n in length.
+        Returns a parser consisting of the elements of this parser, truncated to be no longer than n in length.
         NOT TERMINATED
         """
         counter = count()
@@ -134,8 +134,8 @@ class Stream(Iterable):
 
     def skip(self, n: int) -> Stream:
         """
-        Returns a stream consisting of the remaining elements of this stream after discarding the first n elements
-        of the stream. If this stream contains fewer than n elements then an empty stream will be returned.
+        Returns a parser consisting of the remaining elements of this parser after discarding the first n elements
+        of the parser. If this parser contains fewer than n elements then an empty parser will be returned.
         NOT TERMINATED
         """
         counter = count()
@@ -143,7 +143,7 @@ class Stream(Iterable):
 
     def for_each(self, function: Callable[[Any], Any]):
         """
-        Performs an action for each element of this stream.
+        Performs an action for each element of this parser.
         TERMINATED
         """
         for item in self._iter_:
@@ -151,7 +151,7 @@ class Stream(Iterable):
 
     def reduce(self, function: Callable[[Any, Any], Any], initial: Any = None) -> Any:
         """
-        Performs a reduction on the elements of this stream, using the provided identity value and an associative
+        Performs a reduction on the elements of this parser, using the provided identity value and an associative
         accumulation function, and returns the reduced value.
         TERMINATED
         """
@@ -190,8 +190,8 @@ class Stream(Iterable):
 
     def min(self, comparator: Callable[[Any, Any], int]) -> Optional:
         """
-        Returns the minimum element of this stream according to the provided Comparator or Optional.empty()
-        if stream is empty.
+        Returns the minimum element of this parser according to the provided Comparator or Optional.empty()
+        if parser is empty.
         TERMINATED
         """
         result = Optional.empty()
@@ -204,8 +204,8 @@ class Stream(Iterable):
 
     def max(self, comparator: Callable[[Any, Any], int]) -> Optional:
         """
-        Returns the maximum element of this stream according to the provided Comparator or Optional.empty()
-        if stream is empty.
+        Returns the maximum element of this parser according to the provided Comparator or Optional.empty()
+        if parser is empty.
         TERMINATED
         """
         result = Optional.empty()
@@ -218,7 +218,7 @@ class Stream(Iterable):
 
     def count(self) -> int:
         """
-        Returns the count of elements in this stream.
+        Returns the count of elements in this parser.
         TERMINATED
         """
         result = 0
@@ -228,8 +228,8 @@ class Stream(Iterable):
 
     def any_match(self, predicate: Callable[[Any], bool]) -> bool:
         """
-        Returns whether any elements of this stream match the provided predicate. May not evaluate the predicate
-        on all elements if not necessary for determining the result. If the stream is empty then false is returned
+        Returns whether any elements of this parser match the provided predicate. May not evaluate the predicate
+        on all elements if not necessary for determining the result. If the parser is empty then false is returned
         and the predicate is not evaluated.
         TERMINATED
         """
@@ -240,7 +240,7 @@ class Stream(Iterable):
 
     def all_match(self, predicate: Callable[[Any], bool]) -> bool:
         """
-        Returns whether all elements of this stream match the provided predicate.
+        Returns whether all elements of this parser match the provided predicate.
         TERMINATED
         """
         for item in self._iter_:
@@ -250,7 +250,7 @@ class Stream(Iterable):
 
     def none_match(self, predicate: Callable[[Any], bool]) -> bool:
         """
-        Returns whether no elements of this stream match the provided predicate.
+        Returns whether no elements of this parser match the provided predicate.
         TERMINATED
         """
         for item in self._iter_:
@@ -260,7 +260,7 @@ class Stream(Iterable):
 
     def find_first(self, predicate: Callable[[Any], bool]) -> Optional:
         """
-        Returns whether no elements of this stream match the provided predicate.
+        Returns whether no elements of this parser match the provided predicate.
         TERMINATED
         """
         for item in self._iter_:
@@ -270,8 +270,8 @@ class Stream(Iterable):
 
     def concat(self, another: Stream) -> Stream:
         """
-        Creates a lazily concatenated stream whose elements are all the elements of the self stream followed by all
-        the elements of the another stream
+        Creates a lazily concatenated parser whose elements are all the elements of the self parser followed by all
+        the elements of the another parser
         NOT TERMINATED
         """
         return self.stream_of(self, another)
@@ -284,7 +284,7 @@ class Stream(Iterable):
         """
         collect elements to dictionary where key is taken by applying key_function,
         value is taken by applying combiner to result of init_combiner function and
-        results of value_function applying to each element of the origin stream.
+        results of value_function applying to each element of the origin parser.
         TERMINATED
         """
         result = dict()
@@ -317,8 +317,8 @@ class Stream(Iterable):
                    key_func: Callable[[Any], str],
                    join_type: JoinType = JoinType.FULL) -> Stream:
         """
-        zip items of several streams to one stream of pair items. Items bind by key_func!
-        if one of stream not contain item then in pair their item will be None.
+        zip items of several streams to one parser of pair items. Items bind by key_func!
+        if one of parser not contain item then in pair their item will be None.
         !!! None keys ignored !!!
         """
         stream1_objects = dict()

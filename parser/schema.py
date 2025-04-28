@@ -6,7 +6,7 @@ import re
 from json import JSONEncoder
 from typing import Any
 
-from stream.stream import Stream
+from parser.stream import Stream
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class ClassJSONEncoder(JSONEncoder):
 class Metadata:
     """
      Simple metadata class to quick check changes in API.
-     Main idea is combine all objects in stream in a one schema
+     Main idea is combine all objects in parser in a one schema
      by use Metadata.merge() in reduce step. Then compare obtained schema
      with schema of last dump by using Metadata.diff(). Result ay not be great but
      can be first step in catch problems while dumping. It could be improved in the future.
